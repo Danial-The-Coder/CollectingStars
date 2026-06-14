@@ -1,0 +1,13 @@
+{
+  "name": "collectingstars",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "phaser": "^4.1.0"
+  }
+}
