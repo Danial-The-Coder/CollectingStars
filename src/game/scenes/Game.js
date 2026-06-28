@@ -8,6 +8,8 @@ export class Game extends Scene {
   init() {
     //------WRITE CODE BELLOW-----//
     this.platforms = [];
+    this.player = undefined;
+    this.stars= undefined
   }
 
   create() {
@@ -16,6 +18,20 @@ export class Game extends Scene {
     this.platforms.create(600, 400, "ground");
     this.platforms.create(50, 250, "ground");
     this.platforms.create(750, 220, "ground");
+    this.platforms.create(400, 568, "ground").setScale(2).refreshBody();
+    this.player = this.physics.add.sprite(100, 450, "dude");
+    this.player.setCollideWorldBounds(true);
+    this.physics.add.collider(this.player, this.platforms);
+    this.stars = this.physics.add.group({
+      key: "star",
+      repeat: 10,
+      setXY: { x: 50, y: 0, stepX: 70 },
+    });
+    this.physics.add.collider(this.stars, this.platforms);
+    // this.stars.children.iterate(function (child) {
+    //   // @ts-ignore
+    //   child.setBounceY(0.5); //Each star of the group has a vertical reflection effect of 0.5
+    // });
   }
 
   preload() {
