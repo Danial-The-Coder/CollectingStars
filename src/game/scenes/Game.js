@@ -10,6 +10,7 @@ export class Game extends Scene {
     this.platforms = [];
     this.player = undefined;
     this.stars= undefined
+    this.cursor = undefined
   }
 
   create() {
@@ -26,8 +27,28 @@ export class Game extends Scene {
       key: "star",
       repeat: 10,
       setXY: { x: 50, y: 0, stepX: 70 },
+      
     });
     this.physics.add.collider(this.stars, this.platforms);
+    this.cursor = this.input.keyboard.createCursorKeys();
+    this.anims.create({
+      key: "left", //--->The name of the animation
+      frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }), //--->Frames used
+      frameRate: 10, //--->speed of switching between frames
+      repeat: -1, //--->Repeat animation continuously
+    });
+    this.anims.create({
+      key: "turn",
+      frames: [{ key: "dude", frame: 4 }],
+      frameRate: 20,
+    });
+    this.anims.create({
+      key: "right",
+      frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
     // this.stars.children.iterate(function (child) {
     //   // @ts-ignore
     //   child.setBounceY(0.5); //Each star of the group has a vertical reflection effect of 0.5
@@ -45,4 +66,24 @@ export class Game extends Scene {
       frameHeight: 48,
     });
   }
+  update() {
+    if (this.cursor.left.isDown) {
+      this.player.setVelocity(-200, 200);
+      this.player.anims.play("left", true);
+    } else if (this.cursor.right.isDown) {
+      this.player.setVelocity(200, 200);
+      this.player.anims.play("right", true);
+    } else {
+      this.player.setVelocity(0, 0);
+      this.player.anims.play("turn");
+    }
+      if (this.cursor.up.isDown) {
+      this.player.setVelocity(0, -200);  
+      this.player.anims.play("turn");
+    }
+  }
+  collectStar(player, star){
+    star.destroy()
+  }
+
 }
