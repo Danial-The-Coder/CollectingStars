@@ -1,4 +1,4 @@
-# collectingstars
+# collectingstarss
 
 To install dependencies:
 
