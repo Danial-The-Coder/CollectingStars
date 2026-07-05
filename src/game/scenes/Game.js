@@ -9,8 +9,11 @@ export class Game extends Scene {
     //------WRITE CODE BELLOW-----//
     this.platforms = [];
     this.player = undefined;
-    this.stars= undefined
-    this.cursor = undefined
+    this.stars= undefined;
+    this.cursor = undefined;
+    this.scoreText = undefined;
+    this.score = 0;
+    this.bombs = undefined;
   }
 
   create() {
@@ -23,6 +26,11 @@ export class Game extends Scene {
     this.player = this.physics.add.sprite(100, 450, "dude");
     this.player.setCollideWorldBounds(true);
     this.physics.add.collider(this.player, this.platforms);
+    this.bombs = this.physics.add.group({
+      key: "bomb",
+      repeat: 5,
+      setXY: { x: 30, y: 0, stepX: 120 },
+    });
     this.stars = this.physics.add.group({
       key: "star",
       repeat: 10,
@@ -30,12 +38,13 @@ export class Game extends Scene {
       
     });
     this.physics.add.collider(this.stars, this.platforms);
+    this.physics.add.collider(this.bombs, this.platforms);
     this.cursor = this.input.keyboard.createCursorKeys();
     this.anims.create({
-      key: "left", //--->The name of the animation
-      frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }), //--->Frames used
-      frameRate: 10, //--->speed of switching between frames
-      repeat: -1, //--->Repeat animation continuously
+      key: "left", 
+      frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }), 
+      frameRate: 10, 
+      repeat: -1, 
     });
     this.anims.create({
       key: "turn",
@@ -49,10 +58,11 @@ export class Game extends Scene {
       repeat: -1,
     });
     this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-    // this.stars.children.iterate(function (child) {
-    //   // @ts-ignore
-    //   child.setBounceY(0.5); //Each star of the group has a vertical reflection effect of 0.5
-    // });
+    this.physics.add.overlap(this.player, this.bombs, this.gameOver, null, this);
+    this.scoreText = this.add.text(16, 16, "Score : 0", {
+    fontSize: "32px",
+    fill: "yellow",
+    });
   }
 
   preload() {
@@ -78,12 +88,25 @@ export class Game extends Scene {
       this.player.anims.play("turn");
     }
       if (this.cursor.up.isDown) {
-      this.player.setVelocity(0, -200);  
+      this.player.setVelocity(0, -500);  
       this.player.anims.play("turn");
     }
+    if (this.score >= 100) {
+    this.physics.pause();
+    this.add.text(250, 300, "You Win!!!", {
+      fontSize: "48px",
+      fill: "yellow",
+  });
+}
   }
   collectStar(player, star){
     star.destroy()
+    this.score += 10; 
+    this.scoreText.setText('Score : '+this.score);
   }
-
+  gameOver(player, bomb){
+      this.physics.pause()
+      this.add.text(225,300,'Game Over!!!', { 
+      fontSize: '48px', fill:'yellow' })
+  }
 }
